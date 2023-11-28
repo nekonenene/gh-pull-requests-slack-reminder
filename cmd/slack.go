@@ -89,14 +89,14 @@ func ConstructBlocksByIssues(issues []*github.Issue) (*slack.Blocks, error) {
 			},
 		}
 
-		jsonBlocks, _ := pullRequestsBlocks.MarshalJSON()
-		fmt.Println("Pull Request Blocks: ", string(jsonBlocks))
+		// jsonBlocks, _ := pullRequestsBlocks.MarshalJSON()
+		// fmt.Println("Pull Request Blocks: ", string(jsonBlocks))
 
 		blocks.BlockSet = append(blocks.BlockSet, pullRequestsBlocks.BlockSet...)
 	}
 
-	jsonBlocks, _ := blocks.MarshalJSON()
-	fmt.Println("Blocks: ", string(jsonBlocks))
+	// jsonBlocks, _ := blocks.MarshalJSON()
+	// fmt.Println("Blocks: ", string(jsonBlocks))
 
 	return blocks, nil
 }

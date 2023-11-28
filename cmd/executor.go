@@ -31,23 +31,6 @@ func Exec() {
 		log.Fatal(err)
 	}
 
-	if len(issues) == 0 {
-		fmt.Printf("\033[33mSkipped because there are no Pull Requests related the specified label in the open state.\033[0m\n")
-		return
-	}
-
-	fmt.Println("Issues count: ", len(issues))
-
-	for _, issue := range issues {
-		approvedUsers, err := FetchApprovedUsersByIssue(issue)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		fmt.Println("Issue ID: ", issue.GetNumber())
-		fmt.Println("Approved Users: ", approvedUsers)
-	}
-
 	blocks, err := ConstructBlocksByIssues(issues)
 	if err != nil {
 		log.Fatal(err)

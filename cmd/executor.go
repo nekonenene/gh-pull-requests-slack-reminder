@@ -3,6 +3,8 @@ package cmd
 import (
 	"fmt"
 	"time"
+
+	holiday "github.com/holiday-jp/holiday_jp-go"
 )
 
 func Exec() {
@@ -26,5 +28,5 @@ func isWeekend() bool {
 }
 
 func isJapaneseHoliday() bool {
-	return true // TODO
+	return holiday.IsHoliday(time.Now());
 }

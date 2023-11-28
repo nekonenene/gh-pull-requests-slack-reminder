@@ -88,9 +88,42 @@ func IssuesEachAuthor(issues []*github.Issue) map[string][]*github.Issue {
 	IssuesEachAuthor := make(map[string][]*github.Issue)
 
 	for _, issue := range issues {
-		userId := *issue.User.Login
+		userId := issue.User.GetLogin()
 		IssuesEachAuthor[userId] = append(IssuesEachAuthor[userId], issue)
 	}
 
 	return IssuesEachAuthor
+}
+
+// Fetch user IDs who approved the pull request
+func FetchApprovedUsersByIssue(issue *github.Issue) ([]string, error) {
+	var reviews []*github.PullRequestReview
+	var userIds []string
+	pageNum := 1
+
+	for {
+		tmpReviews, resp, err := githubClient.PullRequests.ListReviews(ctx, params.GitHubOwner, params.GitHubRepo, issue.GetNumber(), &github.ListOptions{
+			PerPage: PerPageDefault,
+			Page:    pageNum,
+		})
+		if err != nil {
+			return userIds, err
+		}
+
+		reviews = append(reviews, tmpReviews...)
+
+		if resp.NextPage == 0 {
+			break
+		} else {
+			pageNum = resp.NextPage
+		}
+	}
+
+	for _, review := range reviews {
+		if review.GetState() == "APPROVED" {
+			userIds = append(userIds, review.User.GetLogin())
+		}
+	}
+
+	return userIds, nil
 }

@@ -38,9 +38,19 @@ func Exec() {
 
 	fmt.Println("Issues count: ", len(issues))
 
-	issuesEachAuthor := IssuesEachAuthor(issues)
+	for _, issue := range issues {
+		approvedUsers, err := FetchApprovedUsersByIssue(issue)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	fmt.Println("Issue Each Author: ", issuesEachAuthor)
+		fmt.Println("Issue ID: ", issue.GetNumber())
+		fmt.Println("Approved Users: ", approvedUsers)
+	}
+
+	// issuesEachAuthor := IssuesEachAuthor(issues)
+
+	// fmt.Println("Issue Each Author: ", issuesEachAuthor)
 
 	fmt.Println("Processing succeeded!")
 }

@@ -9,6 +9,7 @@ import (
 )
 
 type parameters struct {
+	GitHubAPIToken        string
 	GitHubOwner           string
 	GitHubRepo            string
 	TargetLabelName       string
@@ -22,6 +23,7 @@ var params parameters
 var Version = "" // Overwrite when building
 
 func ParseParameters() {
+	flag.StringVar(&params.GitHubAPIToken, "token", "", "[Required] GitHub API Token")
 	flag.StringVar(&params.GitHubOwner, "owner", "", "[Required] Owner name of the repository (e.g. octocat)")
 	flag.StringVar(&params.GitHubRepo, "repo", "", "[Required] Repository name (e.g. hello-world)")
 	flag.StringVar(&params.TargetLabelName, "label-name", "", "[Required] Label name related to target pull requests (e.g. in-review)")
@@ -38,6 +40,9 @@ func ParseParameters() {
 	}
 
 	// Validations
+	if params.GitHubAPIToken == "" {
+		log.Fatalln("-token is required")
+	}
 	if params.GitHubOwner == "" {
 		log.Fatalln("-owner is required")
 	}

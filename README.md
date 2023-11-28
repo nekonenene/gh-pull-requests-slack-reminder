@@ -1,6 +1,7 @@
 # gh-pull-requests-slack-reminder
 
-Description...
+A CLI application that notifies to Slack with pull requests that have a specific label, like `in-review`.
+
 
 ## Installation
 
@@ -16,7 +17,7 @@ The token needs the read-access permission of pull requests and issues.
 ### Example
 
 ```sh
-gh-release-pr-generator --token 123456789abcd123456789abcd --owner nekonenene --repo my-repository-name --label-name "in review" --webhook-url https://hooks.slack.com/services/XXXXXXXX --avoid-weekend
+gh-pull-requests-slack-reminder --token 123456789abcd123456789abcd --owner nekonenene --repo my-repository-name --label-name "in-review" --webhook-url https://hooks.slack.com/services/XXXXXXXX --avoid-weekend
 ```
 
 ### Parameters

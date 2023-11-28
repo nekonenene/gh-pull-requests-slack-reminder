@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"time"
@@ -54,13 +53,13 @@ func Exec() {
 		log.Fatal(err)
 	}
 
-	blocksJson, _ := json.Marshal(blocks)
-	fmt.Println("Blocks: ", blocksJson)
+	blocksJson, _ := blocks.MarshalJSON()
+	fmt.Println("Blocks: ", string(blocksJson))
 
-	// err = SendSlackMessage(blocks)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	err = SendSlackMessage(blocks)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	fmt.Println("Processing succeeded!")
 }

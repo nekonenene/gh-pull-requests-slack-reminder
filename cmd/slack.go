@@ -9,11 +9,9 @@ import (
 )
 
 // Send a message to Slack using Incoming Webhook
-func SendSlackMessage(blocks []slack.Block) error {
+func SendSlackMessage(blocks *slack.Blocks) error {
 	err := slack.PostWebhook(params.SlackWebhookUrl, &slack.WebhookMessage{
-		Blocks: &slack.Blocks{
-			BlockSet: blocks,
-		},
+		Blocks: blocks,
 	})
 	if err != nil {
 		return err
@@ -22,26 +20,30 @@ func SendSlackMessage(blocks []slack.Block) error {
 	return nil
 }
 
-func ConstructBlocksByIssues(issues []*github.Issue) ([]slack.Block, error) {
+func ConstructBlocksByIssues(issues []*github.Issue) (*slack.Blocks, error) {
 	if len(issues) == 0 {
-		blocks := []slack.Block{
-			slack.NewSectionBlock(
-				slack.NewTextBlockObject("mrkdwn", "*No pull requests to review!!* 👏", true, false),
-				nil,
-				nil,
-			),
+		blocks := &slack.Blocks{
+			BlockSet: []slack.Block{
+				slack.NewSectionBlock(
+					slack.NewTextBlockObject("mrkdwn", "*No pull requests to review!!* 👏", true, false),
+					nil,
+					nil,
+				),
+			},
 		}
 
 		return blocks, nil
 	}
 
-	blocks := []slack.Block{
-		slack.NewSectionBlock(
-			slack.NewTextBlockObject("mrkdwn", "*Please review the following PRs!* 😎", true, false),
-			nil,
-			nil,
-		),
-		slack.NewDividerBlock(),
+	blocks := &slack.Blocks{
+		BlockSet: []slack.Block{
+			slack.NewSectionBlock(
+				slack.NewTextBlockObject("mrkdwn", "*Please review the following PRs!* 😎", true, false),
+				nil,
+				nil,
+			),
+			slack.NewDividerBlock(),
+		},
 	}
 
 	issuesEachAuthor := IssuesEachAuthor(issues)
@@ -70,23 +72,31 @@ func ConstructBlocksByIssues(issues []*github.Issue) ([]slack.Block, error) {
 			}
 		}
 
-		pullRequestsBlocks := []slack.Block{
-			slack.NewSectionBlock(
-				slack.NewTextBlockObject("mrkdwn", fmt.Sprintf("*%s*", authorUserId), false, false),
-				nil,
-				nil,
-			),
-			slack.NewActionBlock(
-				fmt.Sprintf("%s-checkboxes-action", authorUserId),
-				slack.NewCheckboxGroupsBlockElement(
-					fmt.Sprintf("%s-checkboxes", authorUserId),
-					checkboxesObjects...,
+		pullRequestsBlocks := &slack.Blocks{
+			BlockSet: []slack.Block{
+				slack.NewSectionBlock(
+					slack.NewTextBlockObject("mrkdwn", fmt.Sprintf("*%s*", authorUserId), false, false),
+					nil,
+					nil,
 				),
-			),
+				slack.NewActionBlock(
+					fmt.Sprintf("%s-checkboxes-action", authorUserId),
+					slack.NewCheckboxGroupsBlockElement(
+						fmt.Sprintf("%s-checkboxes", authorUserId),
+						checkboxesObjects...,
+					),
+				),
+			},
 		}
 
-		blocks = append(blocks, pullRequestsBlocks...)
+		jsonBlocks, _ := pullRequestsBlocks.MarshalJSON()
+		fmt.Println("Pull Request Blocks: ", string(jsonBlocks))
+
+		blocks.BlockSet = append(blocks.BlockSet, pullRequestsBlocks.BlockSet...)
 	}
+
+	jsonBlocks, _ := blocks.MarshalJSON()
+	fmt.Println("Blocks: ", string(jsonBlocks))
 
 	return blocks, nil
 }

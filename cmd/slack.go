@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/google/go-github/v56/github"
 	"github.com/slack-go/slack"
@@ -68,7 +69,7 @@ func ConstructBlocksByIssues(issues []*github.Issue) (*slack.Blocks, error) {
 			checkboxesObjects[i] = &slack.OptionBlockObject{
 				Text:        slack.NewTextBlockObject("mrkdwn", text, false, false),
 				Description: description,
-				Value:       fmt.Sprintf("pr-%v", issue.GetNumber()),
+				Value:       fmt.Sprintf("pr-%v-checkbox-%d", issue.GetNumber(), time.Now().Unix()),
 			}
 		}
 
@@ -80,9 +81,9 @@ func ConstructBlocksByIssues(issues []*github.Issue) (*slack.Blocks, error) {
 					nil,
 				),
 				slack.NewActionBlock(
-					fmt.Sprintf("%s-checkboxes-action", authorUserId),
+					fmt.Sprintf("%s-checkboxes-action-%d", authorUserId, time.Now().Unix()),
 					slack.NewCheckboxGroupsBlockElement(
-						fmt.Sprintf("%s-checkboxes", authorUserId),
+						fmt.Sprintf("%s-checkboxes-%d", authorUserId, time.Now().Unix()),
 						checkboxesObjects...,
 					),
 				),

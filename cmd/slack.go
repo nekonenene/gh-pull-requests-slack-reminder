@@ -25,7 +25,7 @@ func ConstructBlocksByIssues(issues []*github.Issue) (*slack.Blocks, error) {
 		blocks := &slack.Blocks{
 			BlockSet: []slack.Block{
 				slack.NewSectionBlock(
-					slack.NewTextBlockObject("mrkdwn", "*No pull requests to review!!* 👏", true, false),
+					slack.NewTextBlockObject("mrkdwn", "*No pull requests to review!!* 👏", false, false),
 					nil,
 					nil,
 				),
@@ -38,7 +38,7 @@ func ConstructBlocksByIssues(issues []*github.Issue) (*slack.Blocks, error) {
 	blocks := &slack.Blocks{
 		BlockSet: []slack.Block{
 			slack.NewSectionBlock(
-				slack.NewTextBlockObject("mrkdwn", "*Please review the following PRs!* 😎", true, false),
+				slack.NewTextBlockObject("mrkdwn", "*Please review the following PRs!* 😎", false, false),
 				nil,
 				nil,
 			),

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"time"
@@ -48,9 +49,18 @@ func Exec() {
 		fmt.Println("Approved Users: ", approvedUsers)
 	}
 
-	// issuesEachAuthor := IssuesEachAuthor(issues)
+	blocks, err := ConstructBlocksByIssues(issues)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	// fmt.Println("Issue Each Author: ", issuesEachAuthor)
+	blocksJson, _ := json.Marshal(blocks)
+	fmt.Println("Blocks: ", blocksJson)
+
+	// err = SendSlackMessage(blocks)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
 	fmt.Println("Processing succeeded!")
 }

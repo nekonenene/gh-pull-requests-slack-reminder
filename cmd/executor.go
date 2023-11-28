@@ -19,6 +19,13 @@ func Exec() {
 		fmt.Printf("\033[33mSkipped because today is a Japanese holiday.\033[0m\n")
 		return
 	}
+
+	err := InitContextAndGitHubClient()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Processing succeeded!")
 }
 
 // Check whether today is a weekend

@@ -12,6 +12,7 @@ type parameters struct {
 	GitHubAPIToken        string
 	GitHubOwner           string
 	GitHubRepo            string
+	GitHubEnterpriseURL   string
 	TargetLabelName       string
 	SlackWebhookUrl       string
 	AvoidWeekend          bool
@@ -26,6 +27,7 @@ func ParseParameters() {
 	flag.StringVar(&params.GitHubAPIToken, "token", "", "[Required] GitHub API Token")
 	flag.StringVar(&params.GitHubOwner, "owner", "", "[Required] Owner name of the repository (e.g. octocat)")
 	flag.StringVar(&params.GitHubRepo, "repo", "", "[Required] Repository name (e.g. hello-world)")
+	flag.StringVar(&params.GitHubEnterpriseURL, "enterprise-url", "", "[Opiton] URL of GitHub Enterprise (ex. https://github.your.domain )")
 	flag.StringVar(&params.TargetLabelName, "label-name", "", "[Required] Label name related to target pull requests (e.g. in-review)")
 	flag.StringVar(&params.SlackWebhookUrl, "webhook-url", "", "[Required] URL of Slack Incoming Webhook (e.g. https://hooks.slack.com/services/XXXXXX)")
 	flag.BoolVar(&params.AvoidWeekend, "avoid-weekend", false, "[Opiton] If true, don't send notifications on weekends")

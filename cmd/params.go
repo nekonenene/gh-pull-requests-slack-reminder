@@ -9,11 +9,13 @@ import (
 )
 
 type parameters struct {
-	GitHubOwner string
-	GitHubRepo string
-	TargetLabelName string
-	SlackWebhookUrl string
-	ShowVersion    bool
+	GitHubOwner           string
+	GitHubRepo            string
+	TargetLabelName       string
+	SlackWebhookUrl       string
+	AvoidWeekend          bool
+	AvoidJapaneseHolidays bool
+	ShowVersion           bool
 }
 
 var params parameters
@@ -24,6 +26,8 @@ func ParseParameters() {
 	flag.StringVar(&params.GitHubRepo, "repo", "", "[Required] Repository name (e.g. hello-world)")
 	flag.StringVar(&params.TargetLabelName, "label-name", "", "[Required] Label name related to target pull requests (e.g. in-review)")
 	flag.StringVar(&params.SlackWebhookUrl, "webhook-url", "", "[Required] URL of Slack Incoming Webhook (e.g. https://hooks.slack.com/services/XXXXXX)")
+	flag.BoolVar(&params.AvoidWeekend, "avoid-weekend", false, "[Opiton] If true, don't send notifications on weekends")
+	flag.BoolVar(&params.AvoidJapaneseHolidays, "avoid-jp-holidays", false, "[Opiton] If true, don't send notifications on Japanese holidays")
 	flag.BoolVar(&params.ShowVersion, "version", false, "[Opiton] Show version")
 	flag.BoolVar(&params.ShowVersion, "v", false, "[Opiton] Shorthand of -version")
 	flag.Parse()

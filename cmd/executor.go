@@ -21,12 +21,14 @@ func Exec() {
 	}
 }
 
+// Check whether today is a weekend
 func isWeekend() bool {
 	currentTime := time.Now()
 
 	return currentTime.Weekday() == time.Saturday || currentTime.Weekday() == time.Sunday
 }
 
+// Check whether today is a Japanese holiday
 func isJapaneseHoliday() bool {
 	return holiday.IsHoliday(time.Now());
 }

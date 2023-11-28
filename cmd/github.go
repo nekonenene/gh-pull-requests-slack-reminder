@@ -82,3 +82,15 @@ func FetchLabelRelatedPullRequestIssues(limit int) ([]*github.Issue, error) {
 
 	return issues, nil
 }
+
+// Group issues by author
+func IssuesEachAuthor(issues []*github.Issue) map[string][]*github.Issue {
+	IssuesEachAuthor := make(map[string][]*github.Issue)
+
+	for _, issue := range issues {
+		userId := *issue.User.Login
+		IssuesEachAuthor[userId] = append(IssuesEachAuthor[userId], issue)
+	}
+
+	return IssuesEachAuthor
+}

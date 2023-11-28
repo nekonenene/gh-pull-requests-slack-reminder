@@ -37,7 +37,10 @@ func Exec() {
 	}
 
 	fmt.Println("Issues count: ", len(issues))
-	fmt.Println("Issue details: ", issues)
+
+	issuesEachAuthor := IssuesEachAuthor(issues)
+
+	fmt.Println("Issue Each Author: ", issuesEachAuthor)
 
 	fmt.Println("Processing succeeded!")
 }

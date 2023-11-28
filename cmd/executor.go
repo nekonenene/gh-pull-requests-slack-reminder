@@ -26,6 +26,19 @@ func Exec() {
 		log.Fatal(err)
 	}
 
+	issues, err := FetchLabelRelatedPullRequestIssues(FetchIssuesLimit)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if len(issues) == 0 {
+		fmt.Printf("\033[33mSkipped because there are no Pull Requests related the specified label in the open state.\033[0m\n")
+		return
+	}
+
+	fmt.Println("Issues count: ", len(issues))
+	fmt.Println("Issue details: ", issues)
+
 	fmt.Println("Processing succeeded!")
 }
 

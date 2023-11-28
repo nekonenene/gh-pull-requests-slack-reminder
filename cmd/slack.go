@@ -62,7 +62,7 @@ func ConstructBlocksByIssues(issues []*github.Issue) (*slack.Blocks, error) {
 
 			var description *slack.TextBlockObject
 			if len(approvedUsers) > 0 {
-				description = slack.NewTextBlockObject("mrkdwn", fmt.Sprintf("Approved by %s", strings.Join(approvedUsers, ", ")), false, false)
+				description = slack.NewTextBlockObject("mrkdwn", fmt.Sprintf("(%s already approved)", strings.Join(approvedUsers, ", ")), false, false)
 			}
 
 			checkboxesObjects[i] = &slack.OptionBlockObject{

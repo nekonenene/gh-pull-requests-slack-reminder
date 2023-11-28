@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/google/go-github/v56/github"
 	"golang.org/x/oauth2"
@@ -22,7 +21,8 @@ func InitContextAndGitHubClient() error {
 	if params.GitHubEnterpriseURL == "" {
 		githubClient = github.NewClient(httpClient)
 	} else {
-		githubClient, err := github.NewEnterpriseClient(params.GitHubEnterpriseURL, params.GitHubEnterpriseURL, httpClient)
+		var err error
+		githubClient, err = github.NewClient(httpClient).WithEnterpriseURLs(params.GitHubEnterpriseURL, params.GitHubEnterpriseURL)
 		if err != nil {
 			return err
 		}

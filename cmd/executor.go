@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	holiday "github.com/holiday-jp/holiday_jp-go"
@@ -37,5 +38,5 @@ func isWeekend() bool {
 
 // Check whether today is a Japanese holiday
 func isJapaneseHoliday() bool {
-	return holiday.IsHoliday(time.Now());
+	return holiday.IsHoliday(time.Now())
 }

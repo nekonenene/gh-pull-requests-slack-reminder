@@ -70,7 +70,7 @@ func ConstructBlocksByIssues(issues []*github.Issue) (*slack.Blocks, error) {
 						nil,
 					),
 					slack.NewRichTextSectionLinkElement(
-						issue.GetURL(),
+						issue.GetPullRequestLinks().GetHTMLURL(),
 						fmt.Sprintf("#%d %s", issue.GetNumber(), issue.GetTitle()),
 						&slack.RichTextSectionTextStyle{
 							Bold: true,

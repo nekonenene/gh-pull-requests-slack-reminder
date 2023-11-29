@@ -95,10 +95,10 @@ func IssuesEachAuthor(issues []*github.Issue) map[string][]*github.Issue {
 	return IssuesEachAuthor
 }
 
-// Fetch user IDs who approved the pull request
-func FetchApprovedUsersByIssue(issue *github.Issue) ([]string, error) {
+// Fetch user IDs who approved or requested changes the pull request
+func FetchReviewedUsersByIssue(issue *github.Issue) (map[string][]string, error) {
 	var reviews []*github.PullRequestReview
-	var userIds []string
+	reviewedUsers := make(map[string][]string) // key is "approved" or "changes_requested"
 	pageNum := 1
 
 	for {
@@ -107,7 +107,7 @@ func FetchApprovedUsersByIssue(issue *github.Issue) ([]string, error) {
 			Page:    pageNum,
 		})
 		if err != nil {
-			return userIds, err
+			return reviewedUsers, err
 		}
 
 		reviews = append(reviews, tmpReviews...)
@@ -121,9 +121,13 @@ func FetchApprovedUsersByIssue(issue *github.Issue) ([]string, error) {
 
 	for _, review := range reviews {
 		if review.GetState() == "APPROVED" {
-			userIds = append(userIds, review.User.GetLogin())
+			reviewedUsers["approved"] = append(reviewedUsers["approved"], review.User.GetLogin())
+		}
+
+		if review.GetState() == "CHANGES_REQUESTED" {
+			reviewedUsers["changes_requested"] = append(reviewedUsers["changes_requested"], review.User.GetLogin())
 		}
 	}
 
-	return userIds, nil
+	return reviewedUsers, nil
 }

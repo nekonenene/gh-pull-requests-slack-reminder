@@ -91,15 +91,24 @@ func ConstructBlocksByIssues(issues []*github.Issue) (*slack.Blocks, error) {
 				),
 			)
 
-			approvedUsers, err := FetchApprovedUsersByIssue(issue)
+			reviewedUsers, err := FetchReviewedUsersByIssue(issue)
 			if err != nil {
 				return nil, err
 			}
 
-			if len(approvedUsers) > 0 {
+			if len(reviewedUsers["approved"]) > 0 || len(reviewedUsers["changes_requested"]) > 0 {
+				texts := []string{}
+
+				if len(reviewedUsers["approved"]) > 0 {
+					texts = append(texts, fmt.Sprintf("%s already approved", strings.Join(reviewedUsers["approved"], ", ")))
+				}
+				if len(reviewedUsers["changes_requested"]) > 0 {
+					texts = append(texts, fmt.Sprintf("%s requested changes", strings.Join(reviewedUsers["changes_requested"], ", ")))
+				}
+
 				pullRequestsBlocks[i].Elements = append(pullRequestsBlocks[i].Elements, slack.NewRichTextSection(
 					slack.NewRichTextSectionTextElement(
-						fmt.Sprintf("(%s already approved)", strings.Join(approvedUsers, ", ")),
+						fmt.Sprintf("(%s)", strings.Join(texts[:], " / ")),
 						&slack.RichTextSectionTextStyle{
 							Italic: true,
 						},

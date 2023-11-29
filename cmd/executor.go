@@ -36,15 +36,12 @@ func Exec() {
 		log.Fatal(err)
 	}
 
-	blocksJson, _ := blocks.MarshalJSON()
-	fmt.Println("Blocks: ", string(blocksJson))
-
 	err = SendSlackMessage(blocks)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Processing succeeded!")
+	fmt.Println("\033[32mProcessing succeeded!\033[0m")
 }
 
 // Check whether today is a weekend

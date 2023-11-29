@@ -17,6 +17,7 @@ type parameters struct {
 	SlackWebhookUrl       string
 	AvoidWeekend          bool
 	AvoidJapaneseHolidays bool
+	DryRunFlag            bool
 	ShowVersion           bool
 }
 
@@ -32,6 +33,7 @@ func ParseParameters() {
 	flag.StringVar(&params.SlackWebhookUrl, "webhook-url", "", "[Required] URL of Slack Incoming Webhook (e.g. https://hooks.slack.com/services/XXXXXX)")
 	flag.BoolVar(&params.AvoidWeekend, "avoid-weekend", false, "[Opiton] If set, don't send notifications on weekends")
 	flag.BoolVar(&params.AvoidJapaneseHolidays, "avoid-jp-holidays", false, "[Opiton] If set, don't send notifications on Japanese holidays")
+	flag.BoolVar(&params.DryRunFlag, "dry-run", false, "[Opiton] If set, don't send notifications to Slack")
 	flag.BoolVar(&params.ShowVersion, "version", false, "[Opiton] Show version")
 	flag.BoolVar(&params.ShowVersion, "v", false, "[Opiton] Shorthand of -version")
 	flag.Parse()

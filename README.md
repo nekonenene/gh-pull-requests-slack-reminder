@@ -32,6 +32,7 @@ gh-pull-requests-slack-reminder --token 123456789abcd123456789abcd --owner nekon
 |-avoid-weekend| If set, don't send notifications on weekends |  |
 |-avoid-jp-holidays| If set, don't send notifications on Japanese holidays |  |
 |-enterprise-url| URL of GitHub Enterprise (e.g. https://github.your.domain ) |  |
+|-dry-run| If set, don't send notifications to Slack |  |
 
 And this command shows all parameters:
 

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -11,9 +12,20 @@ import (
 
 // Send a message to Slack using Incoming Webhook
 func SendSlackMessage(blocks *slack.Blocks) error {
-	err := slack.PostWebhook(params.SlackWebhookUrl, &slack.WebhookMessage{
+	postData := slack.WebhookMessage{
 		Blocks: blocks,
-	})
+	}
+
+	// Don't send if the dry-run option is set
+	if params.DryRunFlag {
+		postJson, _ := json.Marshal(postData)
+		fmt.Println("After remove the dry-run option, the following data will be posted to Slack:")
+		fmt.Println(string(postJson))
+
+		return nil
+	}
+
+	err := slack.PostWebhook(params.SlackWebhookUrl, &postData)
 	if err != nil {
 		return err
 	}
@@ -98,14 +110,8 @@ func ConstructBlocksByIssues(issues []*github.Issue) (*slack.Blocks, error) {
 			authorAndPullRequestsBlocks.BlockSet = append(authorAndPullRequestsBlocks.BlockSet, pullRequestsBlocks[i])
 		}
 
-		// jsonBlocks, _ := pullRequestsBlocks.MarshalJSON()
-		// fmt.Println("Pull Request Blocks: ", string(jsonBlocks))
-
 		blocks.BlockSet = append(blocks.BlockSet, authorAndPullRequestsBlocks.BlockSet...)
 	}
-
-	// jsonBlocks, _ := blocks.MarshalJSON()
-	// fmt.Println("Blocks: ", string(jsonBlocks))
 
 	return blocks, nil
 }

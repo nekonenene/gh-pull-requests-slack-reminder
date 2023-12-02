@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	"github.com/google/go-github/v56/github"
 	"golang.org/x/oauth2"
@@ -11,6 +12,13 @@ import (
 var (
 	ctx          context.Context
 	githubClient *github.Client
+)
+
+type ReviewState string
+
+const (
+	Approved         ReviewState = "APPROVED"
+	ChangesRequested ReviewState = "CHANGES_REQUESTED"
 )
 
 // Init ctx and githubClient
@@ -96,9 +104,11 @@ func IssuesEachAuthor(issues []*github.Issue) map[string][]*github.Issue {
 }
 
 // Fetch user IDs who approved or requested changes the pull request
+// Returns a map of user IDs grouped by review state
 func FetchReviewedUsersByIssue(issue *github.Issue) (map[string][]string, error) {
 	var reviews []*github.PullRequestReview
-	reviewedUsers := make(map[string][]string) // key is "approved" or "changes_requested"
+	userAndReviewState := make(map[string]string)     // key: user ID, value: review state ("approved" or "changes_requested")
+	usersEachReviewState := make(map[string][]string) // key: review state ("approved" or "changes_requested"), value: user IDs
 	pageNum := 1
 
 	for {
@@ -107,7 +117,7 @@ func FetchReviewedUsersByIssue(issue *github.Issue) (map[string][]string, error)
 			Page:    pageNum,
 		})
 		if err != nil {
-			return reviewedUsers, err
+			return usersEachReviewState, err
 		}
 
 		reviews = append(reviews, tmpReviews...)
@@ -119,15 +129,37 @@ func FetchReviewedUsersByIssue(issue *github.Issue) (map[string][]string, error)
 		}
 	}
 
+	// Order reviews by latest submitted_at
+	sort.Slice(reviews, func(i, j int) bool {
+		return reviews[i].GetSubmittedAt().After(reviews[j].GetSubmittedAt().Time)
+	})
+
 	for _, review := range reviews {
+		userId := review.User.GetLogin()
+
+		if userAndReviewState[userId] != "" { // Skip if the user has already been added
+			continue
+		}
+
 		if review.GetState() == "APPROVED" {
-			reviewedUsers["approved"] = append(reviewedUsers["approved"], review.User.GetLogin())
+			userAndReviewState[userId] = "approved"
 		}
 
 		if review.GetState() == "CHANGES_REQUESTED" {
-			reviewedUsers["changes_requested"] = append(reviewedUsers["changes_requested"], review.User.GetLogin())
+			userAndReviewState[userId] = "changes_requested"
 		}
 	}
 
-	return reviewedUsers, nil
+	for userId, reviewState := range userAndReviewState {
+		usersEachReviewState[reviewState] = append(usersEachReviewState[reviewState], userId)
+	}
+
+	// Reverse users to sort them by review submitted
+	for _, users := range usersEachReviewState {
+		sort.Slice(users, func(i, j int) bool {
+			return users[i] < users[j]
+		})
+	}
+
+	return usersEachReviewState, nil
 }

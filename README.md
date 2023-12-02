@@ -39,3 +39,42 @@ And this command shows all parameters:
 ```sh
 gh-pull-requests-slack-reminder --help
 ```
+
+### Run with GitHub Actions
+
+An example file of [GitHub Actions](https://docs.github.com/actions/using-workflows/workflow-syntax-for-github-actions):
+
+```yml
+name: Pull Request Review Reminder
+on:
+  schedule:
+    # Exec on 0:30 and 6:30 UTC every day
+    - cron: "30 0,6 * * *"
+
+jobs:
+  gh-pull-requests-slack-reminder:
+    name: gh-pull-requests-slack-reminder
+    runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Tokyo
+    steps:
+      - uses: actions/setup-go@v4
+        with:
+          go-version: ^1.21.4
+      - name: Install gh-pull-requests-slack-reminder
+        run: go install github.com/nekonenene/gh-pull-requests-slack-reminder@v1
+      - name: Run gh-pull-requests-slack-reminder
+        run: >
+          gh-pull-requests-slack-reminder
+            --token ${{ secrets.GITHUB_TOKEN }}
+            --owner ${{ github.repository_owner }}
+            --repo ${{ github.event.repository.name }}
+            --label-name "in-review"
+            --webhook-url "https://hooks.slack.com/services/XXXXXXXX"
+            --avoid-weekend
+```
+
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
